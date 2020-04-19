@@ -81,45 +81,85 @@ export const dealCards = () => {
       players[3].hand.push(deck[i])
     }
   }
+
+  if (players.length ===2) {
+    for(let i = 0; i <deck.length; i +=2) {
+      players[0].hand.push(deck[i])
+    }
+    for(let i = 1; i <deck.length; i +=2) {
+      players[1].hand.push(deck[i])
+    }
+  }
 }
 
-// there needs to be a rounds and hands rounds can go to however many to win hands can go up to 13
 // players[1] starts a round by playing their card first and the card must be a heart, diamond, or club
 // a player can only play a card that isn't the original card suit played if they do not have a card in that suit
 // the first spade can not be played until a player has ran out of a card of the original suit played during a hand
 
 const round = 0
-const hand = 0
+const hand = 0 // maxes out to 13
 const roundStarter = player[1]
 const currentPlayer = players[1]
 const players = []
+const playerCards = []
+
+/**
+ * startGame
+ * @description Starts a new game
+ */
 
 const startGame = () => {
   dealCards()
+  //createBooks() // put how many point's you're going to get
   startRound()
   // await the players turn to happen
   // endTurn()
 }
 
+/**
+ * createBooks
+ * @description Allows the players to decide how many books they're going to declare for the score
+ */
+
+const createBooks = () => {
+  
+} 
+
+/**
+ * startRound
+ * @description Starts a round of cards. A new deck will be created and shuffled and cards will be delt. 
+ */
+
 const startRound = () => {
   round ++
   hand = 1
-  // setEstimate() // estimate score
+  createBooks()
   startTurn()
 }
 
-const playHands = () => {
+/**
+ * playHand
+ * @description Allows players to play the next hand, if it's the last hand of a round changes the order and starts the next round
+ */
+
+const playHand = () => {
   // every 4th time nextPlayer is ran increase hand and || everytime it's players[0] turn
-  if (hand > 13) {
+  if (hand < 13) {
     hand ++
   }  
   if (hand === 13) {
-    // calculateScore()
+    calculateScore()
     rotatePlayerOrder()
     roundStarter = currentPlayer
+    dealCards()
     startRound()
   }
 }
+
+/**
+ * nextPlayer
+ * @description Lets the next person "sitting" clockwise to play a card
+ */
 
 const nextPlayer = () => {
   if (currentPlayer === players[0]) {
@@ -136,30 +176,67 @@ const nextPlayer = () => {
   }
 }
 
+/**
+ * startTurn
+ * @description Starts a players turn, allowing them to play a card
+ */
+
 const startTurn = () => {
-  return currentPlayer.playCard = true
+ currentPlayer.playCard = true
+ playCard()
 }
+
+/**
+ * endTurn
+ * @description Ends a players turn, decides who the next player is, and starts their turn.
+ * If the last player in a hand has gone, decide who won the hand.
+ */
 
 const endTurn = () => {
   currentPlayer.playCard = false
+  // needs to vary depending on 2 or 4 players
+  if (players.length === 4 && currentPlayer === players[3] && round > 1) {
+    winningHand(tableCards)
+  }
+  if (players.length === 2 && currentPlayer === players[1] && round > 1) {
+    winningHand(tableCards)
+  }
   nextPlayer()
   startTurn()
 }
 
+/**
+ * playCard
+ * @description Allows a player to play a card from their hand
+ */
 
-const round = () => {
-  if (hand = 1) {
-    toggleStartTurn(players)
-  }
+
+const playCard = () => {
+  // player can play a card...card gets added to tableCards
+  // card = whatever the card the player plays from their hand
+  tableCards.push(card)
+  endTurn()
 }
+
+/**
+ * winningHand
+ * @description Decides which card wins the hand
+ */
 
 export const winningHand = (tableCards = []) => {
   // need something to verify that player doesn't have card suit in hand
   const tableSuit = tableCards[0].suit
-  const newPowerLevel = tableCards.map(card => card.suit != tableSuit && card.suit != 'Spades' && card.suit != 'Joker' ? card.powerLevel = 0 : card.powerLevel = card.powerLevel)
-  const winningCard = Math.max(...newPowerLevel)
+  const newPowerLevel = tableCards.map(card => card.suit != tableSuit && card.suit != 'Spades' && card.suit != 'Joker' ? card.powerLevel = 0 : {value: card.value, suit: card.suit, powerLevel: card.powerLevel})
+  const winningCard = Math.max(...newPowerLevel.powerLevel)
+  // give book to winning player and start he 
+  //playHand()
   return winningCard
 }
+
+/**
+ * rotatePlayerOrder
+ * @description After a round is over changes the order of players clockwise and a new player is the dealer
+ */
 
 export const rotatePlayerOrder = () => {
   let newOrder = []
@@ -178,4 +255,14 @@ export const rotatePlayerOrder = () => {
   players = newOrders
   
   return players
+}
+
+
+/**
+ * calculateScore
+ * @description Calculates new score for a round
+ */
+
+export const calculateScore = () => {
+
 }
