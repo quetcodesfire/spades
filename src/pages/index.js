@@ -7,6 +7,7 @@ import Container from 'components/Container';
 import img_gatsby from 'assets/images/gatsby-astronaut.png';
 
 const IndexPage = () => {
+
   return (
     <Layout pageName="home">
       <Helmet>
